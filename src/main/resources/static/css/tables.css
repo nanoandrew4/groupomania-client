@@ -1,0 +1,34 @@
+table tr td a.button {
+    display: none;
+}
+
+table tr:hover td a.button {
+    display:inline-block;
+}
+
+table tr td form {
+    display: none;
+}
+
+table tr:hover td form {
+    display:inline-block;
+}
+
+tr:nth-of-type(odd) {
+  background: #eee;
+}
+
+th {
+  background: #333;
+  color: white;
+  font-weight: bold;
+  text-align: center;
+}
+
+table {
+    display: block;
+    overflow: auto;
+    margin: auto;
+    width: fit-content !important;
+    text-align: center;
+}

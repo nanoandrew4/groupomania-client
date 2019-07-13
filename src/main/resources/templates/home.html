@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="fragments :: stdHead"></th:block>
+
+    <title th:text="#{homepage.title}">Homepage</title>
+
+    <link href="../static/css/tables.css" rel="stylesheet" th:href="@{/css/tables.css}" type="text/css"/>
+    <link href="../static/css/images.css" rel="stylesheet" th:href="@{/css/images.css}" type="text/css"/>
+</head>
+<body>
+<div th:replace="fragments :: navbar">Navigation bar fragment</div>
+<div class="container-fluid body-content">
+    <div class="table-responsive">
+        <table id="campaignsOverview" class="table table-hover table-striped">
+            <thead>
+            <tr>
+                <th><label th:text="#{campaign.overview.table.header.title}"></label></th>
+                <th><label th:text="#{campaign.overview.table.header.description}"></label></th>
+                <th><label th:text="#{campaign.overview.table.header.startDate}"></label></th>
+                <th><label th:text="#{campaign.overview.table.header.endDate}"></label></th>
+                <th><label th:text="#{campaign.overview.table.header.state}"></label></th>
+                <th width="15%"><label th:text="#{campaign.overview.table.header.image}"></label></th>
+                <th><label th:text="#{campaign.overview.table.header.functions}"></label></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="campaign : ${campaigns}">
+                <td th:text="${campaign.title}"></td>
+                <td th:text="${campaign.description}"></td>
+                <td th:text="${campaign.startDate}"></td>
+                <td th:text="${campaign.endDate}"></td>
+                <td th:text="${campaign.state.displayName}"></td>
+                <td><img class="img-thumbnail img-table-size"
+                         th:if="${campaign.campaignImageFilePath != null && campaign.campaignImageFilePath != ''}"
+                         th:src="@{http://localhost:8444/images(fileName=${campaign.campaignImageFilePath})}" src=""/>
+                </td>
+                <td>
+                    <form th:action="@{/campaigns/} + ${campaign.id}" method="get">
+                        <input class="btn btn-link" th:value="#{campaign.overview.functions.view}"
+                               type="submit"/>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

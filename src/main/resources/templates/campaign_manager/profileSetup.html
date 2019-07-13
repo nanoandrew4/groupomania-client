@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="fragments :: stdHead"></th:block>
+
+    <title th:text="#{profile.title}">Profile</title>
+</head>
+<body>
+<div th:replace="fragments :: navbar">Navigation bar fragment</div>
+<div class="container-fluid body-content">
+    <div class="col-lg-4 col-lg-offset-4 col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3">
+        <div class="text-center">
+            <h1 th:text="#{profile.update.subtitle}">Profile update</h1>
+        </div>
+        <form action="#" th:action="@{/campaign-manager/profile/setup}" th:method="put"
+              th:object="${campaignManagerProfile}" enctype="multipart/form-data">
+            <div class="text-danger validation-summary-valid" data-valmsg-summary="true">
+                <ul th:if="${#fields.hasErrors('*')}">
+                    <li th:each="err : ${#fields.errors('*')}" th:text="${err}">Bad input</li>
+                </ul>
+            </div>
+
+            <div class="form-group">
+                <div hidden="hidden">
+                    <input class="form-control" th:field="*{profileImageFilePath}"/>
+                </div>
+                <div class="form-group">
+                    <label th:text="#{profile.update.name}">Name</label>
+                    <input autofocus="autofocus" class="form-control" th:field="*{name}"/>
+                </div>
+                <div class="form-group">
+                    <label th:text="#{profile.update.email}">Email</label>
+                    <input class="form-control" th:field="*{email}"/>
+                </div>
+                <div class="form-group">
+                    <label th:text="#{profile.update.address}">Address</label>
+                    <input class="form-control" th:field="*{address}"/>
+                </div>
+                <div class="form-group">
+                    <label th:text="#{profile.update.image}">Profile picture</label>
+                    <br/>
+                    <img th:if="*{profileImageFilePath != null && profileImageFilePath != ''}" src=""
+                         alt="Profile Image"
+                         th:src="@{~/images(fileName=*{profileImageFilePath})}"
+                         class="img-thumbnail"/>
+                    <input accept="image/x-png,image/jpeg,image/jpg" type="file" name="profileImage"/>
+                </div>
+            </div>
+            <div class="text-center">
+                <input class="btn btn-primary" th:value="#{profile.update.submit}" type="submit"/>
+            </div>
+        </form>
+    </div>
+</div>
+<div th:replace="fragments :: footer">Footer</div>
+</body>
+</html>

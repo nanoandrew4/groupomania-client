@@ -1,0 +1,96 @@
+<html xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+
+<head>
+    <th:block th:fragment="stdHead">
+        <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+        <meta content="width=device-width, initial-scale=1" name="viewport">
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet"/>
+        <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'/>
+        <link href='https://fonts.googleapis.com/css?family=Exo' rel='stylesheet' type='text/css'/>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <link rel="stylesheet"
+              href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+
+        <link href="../static/css/navbar.css" rel="stylesheet" th:href="@{/css/navbar.css}" type="text/css"/>
+    </th:block>
+</head>
+
+<body>
+<div class="text-danger validation-summary-valid" data-valmsg-summary="true" th:fragment="validationErrors">
+    <ul th:if="${#fields.hasErrors('*')}">
+        <li th:each="err : ${#fields.errors('*')}" th:text="${err}">Bad input</li>
+    </ul>
+</div>
+<nav class="navbar navbar-inverse" role="navigation" th:fragment="navbar">
+    <div class="container-fluid">
+        <a class="col-lg-4 col-lg-offset-4 col-md-4 col-md-offset-4 col-sm-4 col-sm-offset-4 text-center"
+           href="/">
+            <img th:src="@{/img/logo.png}" title="GroupoMania" alt="GroupoMania" class="navbar-logo-size"
+                 src=""/>
+        </a>
+        <div class="navbar-header">
+            <button aria-expanded="false" class="navbar-toggle collapsed" data-target="#myNavbar"
+                    data-toggle="collapse" type="button">
+                <!-- the hamburger -->
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+        </div>
+        <div class="collapse navbar-collapse" id="myNavbar">
+            <ul class="nav navbar-nav navbar-right">
+                <li sec:authorize="isAnonymous()"
+                    th:unless="${#httpServletRequest.requestURI.contains('/login')}">
+                    <a class="text-primary" href="/login"><label th:text="#{header.login}">Login</label></a>
+                </li>
+                <li sec:authorize="${hasRole('CAMPAIGN_MANAGER')}">
+                    <a href="/campaigns" th:text="#{header.home}">Home</a>
+                </li>
+                <li sec:authorize="${hasRole('CAMPAIGN_MANAGER')}">
+                    <a href="/campaign-manager/password/update" th:text="#{header.passwordUpdate}">Password
+                        Update</a>
+                </li>
+                <li sec:authorize="${hasRole('CAMPAIGN_MANAGER')}">
+                    <a href="/campaign-manager/profile/setup" th:text="#{header.profile}">Profile</a>
+                </li>
+                <li sec:authorize="${hasRole('CAMPAIGN_MANAGER')}">
+                    <a href="/campaign-manager/campaigns" th:text="#{header.campaignOverview}">Campaign
+                        overview</a>
+                </li>
+                <li sec:authorize="${hasRole('CAMPAIGN_MANAGER')}">
+                    <form class="" method="post" name="logoutForm"
+                          th:action="@{/logout}">
+                        <input class="btn btn-link" th:value="#{header.logout}" type="submit"/>
+                    </form>
+                </li>
+                <li id="navLangDropdown">
+                    <div class="dropdown">
+                        <button class="btn btn-link dropdown-toggle" type="button" id="languageMenu"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <label class="text-secondary" th:text="#{lang.menu}"></label>
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="languageMenu">
+                            <li><a th:href="@{${#httpServletRequest.requestURI}} + '?lang=en'"
+                                   th:text="#{lang.en}">English</a></li>
+                            <li><a th:href="@{${#httpServletRequest.requestURI}} + '?lang=es'"
+                                   th:text="#{lang.es}">Spanish</a></li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div th:fragment="footer">
+    <hr>
+    <div class="text-center">
+        <div th:utext="#{copyright}">Footer title</div>
+    </div>
+</div>
+</body>
+</html>
