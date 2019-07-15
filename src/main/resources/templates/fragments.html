@@ -1,4 +1,4 @@
-<html xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<html xmlns:th="https://www.thymeleaf.org">
 
 <head>
     <th:block th:fragment="stdHead">
@@ -42,27 +42,25 @@
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
-                <li sec:authorize="isAnonymous()"
-                    th:unless="${#httpServletRequest.requestURI.contains('/login')}">
+                <li th:unless="${#httpServletRequest.requestURI.contains('/login') || @loginController.isLoggedIn(#httpServletRequest)}">
                     <a class="text-primary" href="/login"><label th:text="#{header.login}">Login</label></a>
                 </li>
-                <li sec:authorize="${hasRole('CAMPAIGN_MANAGER')}">
+                <li th:if="${@loginController.isLoggedIn(#httpServletRequest)}">
                     <a href="/campaigns" th:text="#{header.home}">Home</a>
                 </li>
-                <li sec:authorize="${hasRole('CAMPAIGN_MANAGER')}">
+                <li th:if="${@loginController.isLoggedIn(#httpServletRequest)}">
                     <a href="/campaign-manager/password/update" th:text="#{header.passwordUpdate}">Password
                         Update</a>
                 </li>
-                <li sec:authorize="${hasRole('CAMPAIGN_MANAGER')}">
+                <li th:if="${@loginController.isLoggedIn(#httpServletRequest)}">
                     <a href="/campaign-manager/profile/setup" th:text="#{header.profile}">Profile</a>
                 </li>
-                <li sec:authorize="${hasRole('CAMPAIGN_MANAGER')}">
+                <li th:if="${@loginController.isLoggedIn(#httpServletRequest)}">
                     <a href="/campaign-manager/campaigns" th:text="#{header.campaignOverview}">Campaign
                         overview</a>
                 </li>
-                <li sec:authorize="${hasRole('CAMPAIGN_MANAGER')}">
-                    <form class="" method="post" name="logoutForm"
-                          th:action="@{/logout}">
+                <li th:if="${@loginController.isLoggedIn(#httpServletRequest)}">
+                    <form class="" method="post" name="logoutForm" th:action="@{/signout}">
                         <input class="btn btn-link" th:value="#{header.logout}" type="submit"/>
                     </form>
                 </li>
