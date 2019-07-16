@@ -12,7 +12,7 @@
         <div class="text-center">
             <h2><label th:text="#{login.subtitle}"></label></h2>
         </div>
-        <p class="error" th:if="${loginError}">Wrong user or password</p>
+        <p class="error text-danger" th:if="${loginError}">Wrong user or password</p>
         <form class="" method="post" th:action="@{/login}" th:object="${loginForm}">
             <div class="form-group">
                 <label th:text="#{login.username}">username</label>

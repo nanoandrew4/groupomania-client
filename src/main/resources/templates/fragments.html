@@ -49,7 +49,7 @@
                     <a href="/campaigns" th:text="#{header.home}">Home</a>
                 </li>
                 <li th:if="${@loginController.isLoggedIn(#httpServletRequest)}">
-                    <a href="/campaign-manager/password/update" th:text="#{header.passwordUpdate}">Password
+                    <a href="/campaign-manager/password" th:text="#{header.passwordUpdate}">Password
                         Update</a>
                 </li>
                 <li th:if="${@loginController.isLoggedIn(#httpServletRequest)}">
