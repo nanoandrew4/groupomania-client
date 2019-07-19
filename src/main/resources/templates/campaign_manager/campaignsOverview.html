@@ -41,27 +41,28 @@
                 <td th:text="${campaign.state.displayName}"></td>
                 <td><img class="img-thumbnail img-table-size"
                          th:if="${campaign.campaignImageFilePath != null && campaign.campaignImageFilePath != ''}"
-                         th:src="@{~/images(fileName=${campaign.campaignImageFilePath})}" src=""/>
+                         th:src="${@environment.getProperty('groupomania.server.backend.url')} + '/images?fileName=' + ${campaign.campaignImageFilePath}"
+                         src=""/>
                     <div style="width:200px"
                          th:unless="${campaign.campaignImageFilePath != null && campaign.campaignImageFilePath != ''}">
                     </div>
                 </td>
                 <td width="28%">
-                    <form th:action="@{/campaigns/} + ${campaign.id}" method="get">
+                    <form th:action="@{/campaigns/view/} + ${campaign.id}" method="get">
                         <input class="btn btn-link" th:value="#{campaign.overview.functions.view}" type="submit"/>
                     </form>
-                    <form th:action="@{/campaign-manager/campaigns/update/} + ${campaign.id}" method="get"
+                    <form th:action="@{/campaigns/edit/} + ${campaign.id}" method="get"
                           th:if="${campaign.state.displayName} != 'Archived'">
                         <input class="btn btn-link" th:value="#{campaign.overview.functions.edit}" type="submit"/>
                     </form>
-                    <form th:action="@{/campaign-manager/campaigns/update/state/} + ${campaign.id} + '/' + ${campaign.state.displayName == 'Active' ? 'inactive' : 'active'}"
-                          th:method="patch" th:if="${campaign.state.displayName} != 'Archived'">
+                    <form th:action="@{/campaigns/state/} + ${campaign.id} + '/' + ${campaign.state.displayName == 'Active' ? 'inactive' : 'active'}"
+                          th:method="put" th:if="${campaign.state.displayName} != 'Archived'">
                         <input class="btn btn-link"
                                th:value="${campaign.state.displayName == 'Active'} ? #{campaign.overview.functions.state.deactivate} : #{campaign.overview.functions.state.activate}"
                                type="submit"/>
                     </form>
-                    <form th:action="@{/campaign-manager/campaigns/update/state/} + ${campaign.id} + '/archived'"
-                          th:method="patch" th:if="${campaign.state.displayName} != 'Archived'">
+                    <form th:action="@{/campaigns/state/} + ${campaign.id} + '/archived'"
+                          th:method="put" th:if="${campaign.state.displayName} != 'Archived'">
                         <input class="btn btn-link" th:value="#{campaign.overview.functions.state.archive}"
                                type="submit"/>
                     </form>

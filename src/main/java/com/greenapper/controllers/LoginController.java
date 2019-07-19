@@ -47,7 +47,7 @@ public class LoginController {
 																			 requestProperty, params);
 
 		if (serverResponse.getCode() == 200) {
-			response.addCookie(createTokenCookie(serverResponse.getBody()));
+			response.addCookie(createTokenCookie((String) serverResponse.getBody()));
 			return "redirect:/";
 		} else {
 			model.addAttribute("loginError", true);

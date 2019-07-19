@@ -18,8 +18,8 @@
         <div th:replace="campaigns/campaignFragments :: campaignTypeDropdown"></div>
 
         <form action="#"
-              th:action="@{${T(com.greenapper.controllers.campaign.OfferCampaignController).CAMPAIGN_CREATION_URI}}"
-              th:method="post" th:object="${campaign}" enctype="multipart/form-data">
+              th:action="@{${T(com.greenapper.controllers.campaign.OfferCampaignController).ROOT_URI}} + '/' + ${campaign.id == null ? 'create' : 'update'}"
+              th:method="${campaign.id == null} ? post : put" th:object="${campaign}" enctype="multipart/form-data">
 
             <form th:replace="fragments :: validationErrors">Generic campaign fragment</form>
 

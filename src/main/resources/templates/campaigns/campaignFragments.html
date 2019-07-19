@@ -59,7 +59,7 @@
         <img th:if="*{campaignImageFilePath != null && campaignImageFilePath != ''}"
              th:src="@{~/images(fileName=*{campaignImageFilePath})}"
              class="img-thumbnail img-thumbnail-size">
-        <input accept="image/x-png,image/jpeg,image/jpg" type="file" name="campaignImage"
+        <input accept="image/x-png,image/jpeg,image/jpg" type="file" name="tempCampaignImage"
                th:attrappend="disabled=${readonly != null} ? 'disabled' : ''"/>
     </div>
     <div class="form-group">

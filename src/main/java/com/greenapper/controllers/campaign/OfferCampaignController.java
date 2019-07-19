@@ -1,5 +1,74 @@
 package com.greenapper.controllers.campaign;
 
+import com.greenapper.dtos.ServerRequest;
+import com.greenapper.forms.campaigns.OfferCampaignForm;
+import com.greenapper.services.CookieService;
+import com.greenapper.services.HttpRequestService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+
+import java.util.HashMap;
+
+@Controller
 public class OfferCampaignController {
-	public final static String CAMPAIGN_CREATION_URI = "/campaigns/offer/create";
+	@Autowired
+	private HttpRequestService httpRequestService;
+
+	@Autowired
+	private CookieService cookieService;
+
+	public final static String ROOT_URI = "/campaigns/offer";
+
+	public final static String CAMPAIGN_CREATION_URI = ROOT_URI + "/create";
+
+	public final static String CAMPAIGN_CREATION_SUCCESS_REDIRECT = "redirect:/campaign-manager/campaigns";
+
+	public final static String OFFER_CAMPAIGN_FORM = "campaigns/offerCampaign";
+
+	public final static String CAMPAIGN_UPDATE_URI = ROOT_URI + "/update";
+
+	public final static String CAMPAIGN_UPDATE_SUCCESS_REDIRECT = "redirect:/campaign-manager/campaigns";
+
+	@GetMapping(CAMPAIGN_CREATION_URI)
+	public String getEmptyForm(@ModelAttribute("campaign") final OfferCampaignForm offerCampaignForm) {
+		return OFFER_CAMPAIGN_FORM;
+	}
+
+	@PostMapping(CAMPAIGN_CREATION_URI)
+	public String createCampaign(final OfferCampaignForm offerCampaignForm, final Errors errors) {
+		final ServerRequest serverRequest = new ServerRequest();
+		serverRequest.setRelativeUri("/campaigns/offer/create");
+		serverRequest.setMethod("POST");
+
+		final HashMap<String, String> requestParams = new HashMap<>();
+		requestParams.put("Authorization", "Bearer " + cookieService.getCampaignManagerToken());
+		requestParams.put("Content-Type", "application/json");
+		serverRequest.setRequestParameters(requestParams);
+
+		serverRequest.setSuccessRedirectUri(CAMPAIGN_CREATION_SUCCESS_REDIRECT);
+		serverRequest.setErrorRedirectUri(OFFER_CAMPAIGN_FORM);
+
+		return httpRequestService.sendAndHandleRequest(serverRequest, offerCampaignForm, errors).getRedirectUri();
+	}
+
+	@PutMapping(CAMPAIGN_UPDATE_URI)
+	public String updateCampaign(final OfferCampaignForm offerCampaignForm, final Errors errors) {
+		final ServerRequest serverRequest = new ServerRequest();
+		serverRequest.setRelativeUri("/campaigns/offer/update");
+		serverRequest.setMethod("PUT");
+		serverRequest.setSuccessRedirectUri(CAMPAIGN_UPDATE_SUCCESS_REDIRECT);
+		serverRequest.setErrorRedirectUri(OFFER_CAMPAIGN_FORM);
+
+		final HashMap<String, String> requestParams = new HashMap<>();
+		requestParams.put("Authorization", "Bearer " + cookieService.getCampaignManagerToken());
+		requestParams.put("Content-Type", "application/json");
+		serverRequest.setRequestParameters(requestParams);
+
+		return httpRequestService.sendAndHandleRequest(serverRequest, offerCampaignForm, errors).getRedirectUri();
+	}
 }

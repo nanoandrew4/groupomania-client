@@ -1,5 +1,6 @@
 package com.greenapper.forms;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.web.multipart.MultipartFile;
 
 public class CampaignManagerProfileForm {
@@ -13,7 +14,10 @@ public class CampaignManagerProfileForm {
 
 	private String address;
 
-	private MultipartFile profileImage;
+	@JsonIgnore
+	private MultipartFile tempProfileImage;
+
+	private ImageForm profileImage;
 
 	private CampaignManagerProfileForm() {
 	}
@@ -58,11 +62,20 @@ public class CampaignManagerProfileForm {
 		this.address = address;
 	}
 
-	public MultipartFile getProfileImage() {
+	public MultipartFile getTempProfileImage() {
+		return tempProfileImage;
+	}
+
+	public void setTempProfileImage(MultipartFile tempProfileImage) {
+		this.tempProfileImage = tempProfileImage;
+		setProfileImage(new ImageForm(tempProfileImage));
+	}
+
+	public ImageForm getProfileImage() {
 		return profileImage;
 	}
 
-	public void setProfileImage(MultipartFile profileImage) {
+	public void setProfileImage(ImageForm profileImage) {
 		this.profileImage = profileImage;
 	}
 }

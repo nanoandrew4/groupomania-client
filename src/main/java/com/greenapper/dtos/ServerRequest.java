@@ -1,5 +1,7 @@
 package com.greenapper.dtos;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+
 import java.util.Map;
 
 public class ServerRequest {
@@ -10,6 +12,9 @@ public class ServerRequest {
 	private Map<String, String> requestParameters;
 
 	private String body;
+
+	private TypeReference responseBodyType = new TypeReference<String>() {
+	};
 
 	private String successRedirectUri;
 
@@ -67,5 +72,13 @@ public class ServerRequest {
 	public String toString() {
 		return "Method: " + method + "\nRelativeUri: " + relativeUri + "\nRequestParameters: " + requestParameters
 			   + "\nBody: " + body;
+	}
+
+	public TypeReference getResponseBodyType() {
+		return responseBodyType;
+	}
+
+	public void setResponseBodyType(TypeReference responseBodyType) {
+		this.responseBodyType = responseBodyType;
 	}
 }

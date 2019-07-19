@@ -18,7 +18,7 @@
         <div th:replace="campaigns/campaignFragments :: campaignTypeDropdown"></div>
 
         <form action="#"
-              th:action="@{${T(com.greenapper.controllers.campaign.CouponCampaignController).CAMPAIGN_CREATION_URI}}"
+              th:action="@{${T(com.greenapper.controllers.campaign.CouponCampaignController).ROOT_URI}} + '/' + ${campaign.id == null ? 'create' : 'update'}"
               th:method="post" th:object="${campaign}" enctype="multipart/form-data">
 
             <form th:replace="fragments :: validationErrors">Generic campaign fragment</form>

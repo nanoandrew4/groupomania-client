@@ -1,7 +1,9 @@
 package com.greenapper.forms.campaigns;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.greenapper.enums.CampaignState;
 import com.greenapper.enums.CampaignType;
+import com.greenapper.forms.ImageForm;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -15,7 +17,10 @@ public class CampaignForm {
 
 	private String description;
 
-	private MultipartFile campaignImage;
+	@JsonIgnore
+	private MultipartFile tempCampaignImage;
+
+	private ImageForm campaignImage;
 
 	private String campaignImageFilePath;
 
@@ -64,12 +69,13 @@ public class CampaignForm {
 		this.description = description;
 	}
 
-	public MultipartFile getCampaignImage() {
-		return campaignImage;
+	public MultipartFile getTempCampaignImage() {
+		return tempCampaignImage;
 	}
 
-	public void setCampaignImage(MultipartFile campaignImage) {
-		this.campaignImage = campaignImage;
+	public void setTempCampaignImage(MultipartFile tempCampaignImage) {
+		this.tempCampaignImage = tempCampaignImage;
+		setCampaignImage(new ImageForm(tempCampaignImage));
 	}
 
 	public CampaignType getType() {
@@ -150,5 +156,13 @@ public class CampaignForm {
 
 	public void setState(CampaignState state) {
 		this.state = state;
+	}
+
+	public ImageForm getCampaignImage() {
+		return campaignImage;
+	}
+
+	public void setCampaignImage(ImageForm campaignImage) {
+		this.campaignImage = campaignImage;
 	}
 }

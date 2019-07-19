@@ -1,10 +1,12 @@
 package com.greenapper.services.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.greenapper.dtos.ServerRequest;
 import com.greenapper.dtos.ServerResponse;
 import com.greenapper.dtos.ValidationErrorDTO;
+import com.greenapper.forms.ImageForm;
 import com.greenapper.services.HttpRequestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,8 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
@@ -30,12 +35,12 @@ public class DefaultHttpRequestService implements HttpRequestService {
 	private Logger LOG = LoggerFactory.getLogger(DefaultHttpRequestService.class);
 
 	@Override
-	public String sendAndHandleRequest(final ServerRequest serverRequest, final Object body, final Errors errors) {
+	public ServerResponse sendAndHandleRequest(final ServerRequest serverRequest, final Object body, final Errors errors) {
 		if (body != null) {
 			try {
 				serverRequest.setBody(objectMapper.writerFor(body.getClass()).writeValueAsString(body));
 			} catch (JsonProcessingException e) {
-				LOG.error("Error parsing body for object: " + body);
+				LOG.error("Error parsing body for object: " + body, e);
 			}
 		}
 
@@ -43,24 +48,31 @@ public class DefaultHttpRequestService implements HttpRequestService {
 													serverRequest.getRequestParameters(), serverRequest.getBody());
 
 		if (response.getCode() >= 200 && response.getCode() < 300) {
-			return serverRequest.getSuccessRedirectUri();
+			response.setRedirectUri(serverRequest.getSuccessRedirectUri());
+
+			if (!serverRequest.getResponseBodyType().getType().equals(new TypeReference<String>() {
+			}.getType()))
+				response.setBody(parseResponseBody(serverRequest.getResponseBodyType(), (String) response.getBody()));
 		} else if (response.getCode() < 400) {
-			return response.getHeaders().get("Location").get(0);
+			response.setRedirectUri(response.getHeaders().get("Location").get(0));
 		} else if (response.getCode() == 401) {
-			return "redirect:/login";
+			response.setRedirectUri("redirect:/login");
+		} else if (response.getCode() == 404) {
+			response.setRedirectUri("error-not-found");
 		} else if (response.getCode() >= 400) {
-			final ValidationErrorDTO validationErrorDTO = parseValidationErrors(response.getBody());
+			final ValidationErrorDTO validationErrorDTO = parseValidationErrors((String) response.getBody());
 			if (validationErrorDTO != null && validationErrorDTO.getValidationErrors() != null && errors != null) {
 				LOG.info("Processing errors for request: " + serverRequest + "\n Errors: " + validationErrorDTO.getValidationErrors());
 				for (String error : validationErrorDTO.getValidationErrors())
 					errors.reject(null, error);
 			}
 
-			return serverRequest.getErrorRedirectUri();
+			response.setRedirectUri(serverRequest.getErrorRedirectUri());
 		} else {
 			LOG.error("Unable to handle request: " + serverRequest);
-			return null;
 		}
+
+		return response;
 	}
 
 	@Override
@@ -106,6 +118,16 @@ public class DefaultHttpRequestService implements HttpRequestService {
 	}
 
 	@Override
+	public Object parseResponseBody(final TypeReference typeReference, final String body) {
+		try {
+			return objectMapper.readValue(body, typeReference);
+		} catch (IOException e) {
+			LOG.error("Error converting to type: " + typeReference + " with body: " + body);
+			return body;
+		}
+	}
+
+	@Override
 	public ObjectMapper getObjectMapper() {
 		return objectMapper;
 	}
@@ -128,5 +150,26 @@ public class DefaultHttpRequestService implements HttpRequestService {
 		while ((line = in.readLine()) != null)
 			responseBuffer.append(line);
 		return responseBuffer.toString();
+	}
+
+	private void convertMultipartFileToImageForm(final Object body) {
+		Method multipartGetter = null;
+		Method imageFormSetter = null;
+
+		for (Method m : body.getClass().getMethods()) {
+			if (m.getReturnType().isAssignableFrom(MultipartFile.class))
+				multipartGetter = m;
+			else if (m.getParameterCount() == 1 && m.getParameterTypes()[0].equals(ImageForm.class))
+				imageFormSetter = m;
+		}
+
+		if (multipartGetter != null && imageFormSetter != null) {
+			try {
+				final MultipartFile multipartFile = (MultipartFile) multipartGetter.invoke(body, null);
+//				final ImageForm imageForm = new ImageForm();
+			} catch (IllegalAccessException | InvocationTargetException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }

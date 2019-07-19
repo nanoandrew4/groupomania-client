@@ -8,7 +8,9 @@ public class ServerResponse {
 
 	private Map<String, List<String>> headers;
 
-	private String body;
+	private Object body;
+
+	private String redirectUri;
 
 	public int getCode() {
 		return code;
@@ -26,11 +28,19 @@ public class ServerResponse {
 		this.headers = headers;
 	}
 
-	public String getBody() {
+	public Object getBody() {
 		return body;
 	}
 
-	public void setBody(String body) {
+	public void setBody(Object body) {
 		this.body = body;
+	}
+
+	public String getRedirectUri() {
+		return redirectUri;
+	}
+
+	public void setRedirectUri(String redirectUri) {
+		this.redirectUri = redirectUri;
 	}
 }
