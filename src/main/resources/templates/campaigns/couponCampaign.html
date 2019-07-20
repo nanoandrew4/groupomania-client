@@ -19,7 +19,7 @@
 
         <form action="#"
               th:action="@{${T(com.greenapper.controllers.campaign.CouponCampaignController).ROOT_URI}} + '/' + ${campaign.id == null ? 'create' : 'update'}"
-              th:method="post" th:object="${campaign}" enctype="multipart/form-data">
+              th:method="${campaign.id == null} ? post : put" th:object="${campaign}" enctype="multipart/form-data">
 
             <form th:replace="fragments :: validationErrors">Generic campaign fragment</form>
             <div th:replace="campaigns/campaignFragments :: campaignFields">Generic campaign fields</div>

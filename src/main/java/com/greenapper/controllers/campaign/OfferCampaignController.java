@@ -40,7 +40,7 @@ public class OfferCampaignController {
 	}
 
 	@PostMapping(CAMPAIGN_CREATION_URI)
-	public String createCampaign(final OfferCampaignForm offerCampaignForm, final Errors errors) {
+	public String createCampaign(@ModelAttribute("campaign") final OfferCampaignForm offerCampaignForm, final Errors errors) {
 		final ServerRequest serverRequest = new ServerRequest();
 		serverRequest.setRelativeUri("/campaigns/offer/create");
 		serverRequest.setMethod("POST");
@@ -57,7 +57,7 @@ public class OfferCampaignController {
 	}
 
 	@PutMapping(CAMPAIGN_UPDATE_URI)
-	public String updateCampaign(final OfferCampaignForm offerCampaignForm, final Errors errors) {
+	public String updateCampaign(@ModelAttribute("campaign") final OfferCampaignForm offerCampaignForm, final Errors errors) {
 		final ServerRequest serverRequest = new ServerRequest();
 		serverRequest.setRelativeUri("/campaigns/offer/update");
 		serverRequest.setMethod("PUT");

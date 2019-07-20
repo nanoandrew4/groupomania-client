@@ -57,16 +57,26 @@ public class DefaultCampaignController {
 
 	@GetMapping(CAMPAIGN_VIEW_URI + "/{id}")
 	public String getCampaignForViewById(@PathVariable final Long id, final Model model) {
-		try {
-			final CampaignDTO campaignDTO = httpRequestService.getObjectMapper()
-					.readValue(new URL("http://localhost:8444/api/campaigns/" + id), CampaignDTO.class);
-			model.addAttribute("campaign", campaignDTO);
-			model.addAttribute("readonly", true);
-			return "campaigns/" + campaignDTO.getType().displayName.toLowerCase() + "Campaign";
-		} catch (IOException e) {
-			LOG.error("Could not retrieve campaign by ID with id: " + id);
-			return "error";
-		}
+		final ServerRequest serverRequest = new ServerRequest();
+		serverRequest.setRelativeUri("/campaigns/" + id);
+		serverRequest.setMethod("GET");
+		serverRequest.setSuccessRedirectUri(null);
+		serverRequest.setErrorRedirectUri("error");
+		serverRequest.setResponseBodyType(new TypeReference<CampaignDTO>() {
+		});
+
+		final HashMap<String, String> requestParams = new HashMap<>();
+		requestParams.put("Authorization", "Bearer " + cookieService.getCampaignManagerToken());
+		serverRequest.setRequestParameters(requestParams);
+
+		final ServerResponse response = httpRequestService.sendAndHandleRequest(serverRequest, null, null);
+
+		model.addAttribute("campaign", response.getBody());
+		model.addAttribute("readonly", true);
+		String redirectUri = response.getRedirectUri();
+		if (redirectUri == null)
+			redirectUri = "campaigns/" + ((CampaignDTO) response.getBody()).getType().displayName.toLowerCase() + "Campaign";
+		return redirectUri;
 	}
 
 	@GetMapping(CAMPAIGN_EDIT_URI + "/{id}")

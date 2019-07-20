@@ -53,7 +53,7 @@
                         Update</a>
                 </li>
                 <li th:if="${@loginController.isLoggedIn(#httpServletRequest)}">
-                    <a href="/campaign-manager/profile/setup" th:text="#{header.profile}">Profile</a>
+                    <a href="/campaign-manager/profile" th:text="#{header.profile}">Profile</a>
                 </li>
                 <li th:if="${@loginController.isLoggedIn(#httpServletRequest)}">
                     <a href="/campaign-manager/campaigns" th:text="#{header.campaignOverview}">Campaign

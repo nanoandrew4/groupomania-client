@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.greenapper.dtos.ServerRequest;
 import com.greenapper.dtos.ServerResponse;
 import com.greenapper.dtos.ValidationErrorDTO;
-import com.greenapper.forms.ImageForm;
 import com.greenapper.services.HttpRequestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,11 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
@@ -54,7 +50,7 @@ public class DefaultHttpRequestService implements HttpRequestService {
 			}.getType()))
 				response.setBody(parseResponseBody(serverRequest.getResponseBodyType(), (String) response.getBody()));
 		} else if (response.getCode() < 400) {
-			response.setRedirectUri(response.getHeaders().get("Location").get(0));
+			response.setRedirectUri("redirect:" + response.getHeaders().get("Location").get(0).replaceAll(serverUrl, ""));
 		} else if (response.getCode() == 401) {
 			response.setRedirectUri("redirect:/login");
 		} else if (response.getCode() == 404) {
@@ -62,7 +58,6 @@ public class DefaultHttpRequestService implements HttpRequestService {
 		} else if (response.getCode() >= 400) {
 			final ValidationErrorDTO validationErrorDTO = parseValidationErrors((String) response.getBody());
 			if (validationErrorDTO != null && validationErrorDTO.getValidationErrors() != null && errors != null) {
-				LOG.info("Processing errors for request: " + serverRequest + "\n Errors: " + validationErrorDTO.getValidationErrors());
 				for (String error : validationErrorDTO.getValidationErrors())
 					errors.reject(null, error);
 			}
@@ -90,6 +85,7 @@ public class DefaultHttpRequestService implements HttpRequestService {
 			} else
 				conn.setRequestMethod(method);
 
+			conn.setInstanceFollowRedirects(false);
 			if (requestProperties != null && requestProperties.size() > 0)
 				for (String key : requestProperties.keySet())
 					conn.addRequestProperty(key, requestProperties.get(key));
@@ -105,6 +101,7 @@ public class DefaultHttpRequestService implements HttpRequestService {
 
 			serverResponse.setCode(conn.getResponseCode());
 			serverResponse.setBody(readStream(conn.getInputStream()));
+			serverResponse.setHeaders(conn.getHeaderFields());
 		} catch (IOException e) {
 			try {
 				if (conn != null)
@@ -150,26 +147,5 @@ public class DefaultHttpRequestService implements HttpRequestService {
 		while ((line = in.readLine()) != null)
 			responseBuffer.append(line);
 		return responseBuffer.toString();
-	}
-
-	private void convertMultipartFileToImageForm(final Object body) {
-		Method multipartGetter = null;
-		Method imageFormSetter = null;
-
-		for (Method m : body.getClass().getMethods()) {
-			if (m.getReturnType().isAssignableFrom(MultipartFile.class))
-				multipartGetter = m;
-			else if (m.getParameterCount() == 1 && m.getParameterTypes()[0].equals(ImageForm.class))
-				imageFormSetter = m;
-		}
-
-		if (multipartGetter != null && imageFormSetter != null) {
-			try {
-				final MultipartFile multipartFile = (MultipartFile) multipartGetter.invoke(body, null);
-//				final ImageForm imageForm = new ImageForm();
-			} catch (IllegalAccessException | InvocationTargetException e) {
-				e.printStackTrace();
-			}
-		}
 	}
 }

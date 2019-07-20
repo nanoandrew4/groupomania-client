@@ -6,8 +6,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class CampaignManagerProfileForm {
 	private Long id;
 
-	private Long campaignManager;
-
 	private String name;
 
 	private String email;
@@ -19,6 +17,8 @@ public class CampaignManagerProfileForm {
 
 	private ImageForm profileImage;
 
+	private String profileImageFilePath;
+
 	private CampaignManagerProfileForm() {
 	}
 
@@ -28,14 +28,6 @@ public class CampaignManagerProfileForm {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public Long getCampaignManager() {
-		return campaignManager;
-	}
-
-	public void setCampaignManager(Long campaignManager) {
-		this.campaignManager = campaignManager;
 	}
 
 	public String getName() {
@@ -77,6 +69,14 @@ public class CampaignManagerProfileForm {
 
 	public void setProfileImage(ImageForm profileImage) {
 		this.profileImage = profileImage;
+	}
+
+	public String getProfileImageFilePath() {
+		return profileImageFilePath;
+	}
+
+	public void setProfileImageFilePath(String profileImageFilePath) {
+		this.profileImageFilePath = profileImageFilePath;
 	}
 }
 

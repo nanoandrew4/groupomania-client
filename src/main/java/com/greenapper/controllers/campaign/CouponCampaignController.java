@@ -41,7 +41,7 @@ public class CouponCampaignController {
 	}
 
 	@PostMapping(CAMPAIGN_CREATION_URI)
-	public String createCampaign(final CouponCampaignForm couponCampaignForm, final Errors errors) {
+	public String createCampaign(@ModelAttribute("campaign") final CouponCampaignForm couponCampaignForm, final Errors errors) {
 		final ServerRequest serverRequest = new ServerRequest();
 		serverRequest.setRelativeUri("/campaigns/coupon/create");
 		serverRequest.setMethod("POST");
@@ -58,7 +58,7 @@ public class CouponCampaignController {
 	}
 
 	@PutMapping(CAMPAIGN_UPDATE_URI)
-	public String updateCampaign(final CouponCampaignForm couponCampaignForm, final Errors errors) {
+	public String updateCampaign(@ModelAttribute("campaign") final CouponCampaignForm couponCampaignForm, final Errors errors) {
 		final ServerRequest serverRequest = new ServerRequest();
 		serverRequest.setRelativeUri("/campaigns/coupon/update");
 		serverRequest.setMethod("PUT");

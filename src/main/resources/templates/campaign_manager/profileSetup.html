@@ -12,7 +12,7 @@
         <div class="text-center">
             <h1 th:text="#{profile.update.subtitle}">Profile update</h1>
         </div>
-        <form action="#" th:action="@{/campaign-manager/profile/setup}" th:method="put"
+        <form action="#" th:action="@{/campaign-manager/profile}" th:method="put"
               th:object="${campaignManagerProfile}" enctype="multipart/form-data">
             <div class="text-danger validation-summary-valid" data-valmsg-summary="true">
                 <ul th:if="${#fields.hasErrors('*')}">
@@ -41,7 +41,7 @@
                     <br/>
                     <img th:if="*{profileImageFilePath != null && profileImageFilePath != ''}" src=""
                          alt="Profile Image"
-                         th:src="@{~/images(fileName=*{profileImageFilePath})}"
+                         th:src="${@environment.getProperty('groupomania.server.backend.url')} + '/images?fileName=' + *{profileImageFilePath}"
                          class="img-thumbnail"/>
                     <input accept="image/x-png,image/jpeg,image/jpg" type="file" name="tempProfileImage"/>
                 </div>
