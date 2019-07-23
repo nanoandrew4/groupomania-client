@@ -1,9 +1,10 @@
 package com.greenapper.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.greenapper.dtos.ServerRequest;
 import com.greenapper.dtos.ServerResponse;
 import com.greenapper.forms.LoginForm;
-import com.greenapper.services.HttpRequestService;
+import com.greenapper.services.HttpRequestHandlerService;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +28,7 @@ public class LoginController {
 	private final static String basicUsernameAndPassword = "public_campaign_manager_client:publicCampaignManagerSecret";
 
 	@Autowired
-	private HttpRequestService httpRequestService;
+	private HttpRequestHandlerService httpRequestHandlerService;
 
 	@GetMapping("/login")
 	public String login(final LoginForm loginForm) {
@@ -36,23 +37,29 @@ public class LoginController {
 
 	@PostMapping("/login")
 	public String login(final LoginForm loginForm, final Model model, final HttpServletResponse response) {
-		final HashMap<String, String> requestProperty = new HashMap<>();
+		final HashMap<String, String> requestParams = new HashMap<>();
 		final String basicAuth = "Basic " + new String(new Base64().encode(basicUsernameAndPassword.getBytes()));
-		requestProperty.put("Authorization", basicAuth);
+		requestParams.put("Authorization", basicAuth);
 
 		String params = "username=" + loginForm.getUsername() +
 						"&password=" + loginForm.getPassword() +
 						"&grant_type=password";
-		final ServerResponse serverResponse = httpRequestService.sendRequest("/oauth/token", "POST",
-																			 requestProperty, params);
 
-		if (serverResponse.getCode() == 200) {
+		final ServerRequest serverRequest = new ServerRequest();
+		serverRequest.setMethod("POST");
+		serverRequest.setRelativeUri("/oauth/token");
+		serverRequest.setSuccessRedirectUri("redirect:/");
+		serverRequest.setErrorRedirectUri("login");
+		serverRequest.setRequestParameters(requestParams);
+		serverRequest.setBody(params);
+
+		final ServerResponse serverResponse = httpRequestHandlerService.sendAndHandleRequest(serverRequest, null, null);
+
+		if (serverResponse.getCode() == 200)
 			response.addCookie(createTokenCookie((String) serverResponse.getBody()));
-			return "redirect:/";
-		} else {
+		else
 			model.addAttribute("loginError", true);
-			return "login";
-		}
+		return serverResponse.getRedirectUri();
 	}
 
 	@GetMapping("/login-check")
@@ -85,7 +92,7 @@ public class LoginController {
 
 	private Cookie createTokenCookie(final String oauthResponse) {
 		try {
-			final JsonNode rootNode = httpRequestService.getObjectMapper().readTree(oauthResponse);
+			final JsonNode rootNode = httpRequestHandlerService.getObjectMapper().readTree(oauthResponse);
 
 			final Cookie cookie = new Cookie("cmToken", rootNode.get("access_token").asText());
 

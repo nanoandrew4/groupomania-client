@@ -7,12 +7,8 @@ import com.greenapper.dtos.ServerResponse;
 import com.greenapper.dtos.ValidationErrorDTO;
 import org.springframework.validation.Errors;
 
-import java.util.Map;
-
-public interface HttpRequestService {
+public interface HttpRequestHandlerService {
 	ServerResponse sendAndHandleRequest(final ServerRequest serverRequest, final Object body, final Errors errors);
-
-	ServerResponse sendRequest(final String relativeUri, final String method, final Map<String, String> requestProperties, final String body);
 
 	Object parseResponseBody(final TypeReference typeReference, final String body);
 

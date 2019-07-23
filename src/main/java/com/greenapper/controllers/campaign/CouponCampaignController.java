@@ -3,7 +3,7 @@ package com.greenapper.controllers.campaign;
 import com.greenapper.dtos.ServerRequest;
 import com.greenapper.forms.campaigns.CouponCampaignForm;
 import com.greenapper.services.CookieService;
-import com.greenapper.services.HttpRequestService;
+import com.greenapper.services.HttpRequestHandlerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
@@ -18,7 +18,7 @@ import java.util.HashMap;
 public class CouponCampaignController {
 
 	@Autowired
-	private HttpRequestService httpRequestService;
+	private HttpRequestHandlerService httpRequestHandlerService;
 
 	@Autowired
 	private CookieService cookieService;
@@ -54,7 +54,7 @@ public class CouponCampaignController {
 		serverRequest.setSuccessRedirectUri(CAMPAIGN_CREATION_SUCCESS_REDIRECT);
 		serverRequest.setErrorRedirectUri(COUPON_CAMPAIGN_FORM);
 
-		return httpRequestService.sendAndHandleRequest(serverRequest, couponCampaignForm, errors).getRedirectUri();
+		return httpRequestHandlerService.sendAndHandleRequest(serverRequest, couponCampaignForm, errors).getRedirectUri();
 	}
 
 	@PutMapping(CAMPAIGN_UPDATE_URI)
@@ -70,6 +70,6 @@ public class CouponCampaignController {
 		requestParams.put("Content-Type", "application/json");
 		serverRequest.setRequestParameters(requestParams);
 
-		return httpRequestService.sendAndHandleRequest(serverRequest, couponCampaignForm, errors).getRedirectUri();
+		return httpRequestHandlerService.sendAndHandleRequest(serverRequest, couponCampaignForm, errors).getRedirectUri();
 	}
 }

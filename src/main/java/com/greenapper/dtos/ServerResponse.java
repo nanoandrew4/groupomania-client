@@ -12,6 +12,15 @@ public class ServerResponse {
 
 	private String redirectUri;
 
+	public ServerResponse() {}
+
+	public ServerResponse(final int code, final Map<String, List<String>> headers, final Object body, final String redirectUri) {
+		this.code = code;
+		this.headers = headers;
+		this.body = body;
+		this.redirectUri = redirectUri;
+	}
+
 	public int getCode() {
 		return code;
 	}

@@ -6,7 +6,7 @@ import com.greenapper.dtos.ServerRequest;
 import com.greenapper.dtos.ServerResponse;
 import com.greenapper.dtos.campaign.CampaignDTO;
 import com.greenapper.services.CookieService;
-import com.greenapper.services.HttpRequestService;
+import com.greenapper.services.HttpRequestHandlerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ import java.util.List;
 public class DefaultCampaignController {
 
 	@Autowired
-	private HttpRequestService httpRequestService;
+	private HttpRequestHandlerService httpRequestHandlerService;
 
 	@Autowired
 	private CookieService cookieService;
@@ -45,7 +45,7 @@ public class DefaultCampaignController {
 	@GetMapping(ROOT_URI)
 	public String getAllVisibleCampaigns(final Model model) {
 		try {
-			final List<CampaignDTO> campaigns = httpRequestService.getObjectMapper()
+			final List<CampaignDTO> campaigns = httpRequestHandlerService.getObjectMapper()
 					.readValue(new URL("http://localhost:8444/api/campaigns"), new TypeReference<List<CampaignDTO>>() {
 					});
 			model.addAttribute("campaigns", campaigns);
@@ -69,7 +69,7 @@ public class DefaultCampaignController {
 		requestParams.put("Authorization", "Bearer " + cookieService.getCampaignManagerToken());
 		serverRequest.setRequestParameters(requestParams);
 
-		final ServerResponse response = httpRequestService.sendAndHandleRequest(serverRequest, null, null);
+		final ServerResponse response = httpRequestHandlerService.sendAndHandleRequest(serverRequest, null, null);
 
 		model.addAttribute("campaign", response.getBody());
 		model.addAttribute("readonly", true);
@@ -93,7 +93,7 @@ public class DefaultCampaignController {
 		requestParams.put("Authorization", "Bearer " + cookieService.getCampaignManagerToken());
 		serverRequest.setRequestParameters(requestParams);
 
-		final ServerResponse response = httpRequestService.sendAndHandleRequest(serverRequest, null, null);
+		final ServerResponse response = httpRequestHandlerService.sendAndHandleRequest(serverRequest, null, null);
 
 		model.addAttribute("campaign", response.getBody());
 		String redirectUri = response.getRedirectUri();
@@ -114,6 +114,6 @@ public class DefaultCampaignController {
 		requestParams.put("Authorization", "Bearer " + cookieService.getCampaignManagerToken());
 		serverRequest.setRequestParameters(requestParams);
 
-		return httpRequestService.sendAndHandleRequest(serverRequest, null, null).getRedirectUri();
+		return httpRequestHandlerService.sendAndHandleRequest(serverRequest, null, null).getRedirectUri();
 	}
 }

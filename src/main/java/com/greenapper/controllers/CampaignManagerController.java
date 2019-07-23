@@ -6,7 +6,7 @@ import com.greenapper.dtos.ServerResponse;
 import com.greenapper.dtos.campaign.CampaignDTO;
 import com.greenapper.forms.PasswordUpdateForm;
 import com.greenapper.services.CookieService;
-import com.greenapper.services.HttpRequestService;
+import com.greenapper.services.HttpRequestHandlerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,7 +24,7 @@ public class CampaignManagerController {
 	private CookieService cookieService;
 
 	@Autowired
-	private HttpRequestService httpRequestService;
+	private HttpRequestHandlerService httpRequestHandlerService;
 
 	private final static String ROOT_URI = "/campaign-manager";
 
@@ -56,7 +56,7 @@ public class CampaignManagerController {
 		requestParams.put("Content-Type", "application/json");
 		serverRequest.setRequestParameters(requestParams);
 
-		return httpRequestService.sendAndHandleRequest(serverRequest, passwordUpdateForm, errors).getRedirectUri();
+		return httpRequestHandlerService.sendAndHandleRequest(serverRequest, passwordUpdateForm, errors).getRedirectUri();
 	}
 
 	@GetMapping(CAMPAIGNS_OVERVIEW_URI)
@@ -73,7 +73,7 @@ public class CampaignManagerController {
 		requestParams.put("Authorization", "Bearer " + cookieService.getCampaignManagerToken());
 		serverRequest.setRequestParameters(requestParams);
 
-		final ServerResponse response = httpRequestService.sendAndHandleRequest(serverRequest, null, null);
+		final ServerResponse response = httpRequestHandlerService.sendAndHandleRequest(serverRequest, null, null);
 
 		model.addAttribute("campaigns", response.getBody());
 		return response.getRedirectUri();

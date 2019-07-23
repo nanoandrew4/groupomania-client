@@ -6,7 +6,7 @@ import com.greenapper.dtos.ServerRequest;
 import com.greenapper.dtos.ServerResponse;
 import com.greenapper.forms.CampaignManagerProfileForm;
 import com.greenapper.services.CookieService;
-import com.greenapper.services.HttpRequestService;
+import com.greenapper.services.HttpRequestHandlerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,7 +20,7 @@ import java.util.HashMap;
 public class CampaignManagerProfileController {
 
 	@Autowired
-	private HttpRequestService httpRequestService;
+	private HttpRequestHandlerService httpRequestHandlerService;
 
 	@Autowired
 	private CookieService cookieService;
@@ -47,7 +47,7 @@ public class CampaignManagerProfileController {
 		requestParams.put("Authorization", "Bearer " + cookieService.getCampaignManagerToken());
 		serverRequest.setRequestParameters(requestParams);
 
-		final ServerResponse response = httpRequestService.sendAndHandleRequest(serverRequest, null, null);
+		final ServerResponse response = httpRequestHandlerService.sendAndHandleRequest(serverRequest, null, null);
 		model.addAttribute("campaignManagerProfile", response.getBody());
 		return response.getRedirectUri();
 	}
@@ -65,7 +65,7 @@ public class CampaignManagerProfileController {
 		requestParams.put("Content-Type", "application/json");
 		serverRequest.setRequestParameters(requestParams);
 
-		final ServerResponse response = httpRequestService.sendAndHandleRequest(serverRequest, profileForm, errors);
+		final ServerResponse response = httpRequestHandlerService.sendAndHandleRequest(serverRequest, profileForm, errors);
 		return response.getRedirectUri();
 	}
 }
