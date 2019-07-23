@@ -16,6 +16,8 @@
 
     <properties>
         <java.version>1.8</java.version>
+        <dockerdir>prod</dockerdir>
+        <docker.image.prefix>greenapper</docker.image.prefix>
     </properties>
 
     <dependencies>
@@ -59,6 +61,33 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>DevEnvProfile</id>
+            <activation>
+                <property>
+                    <name>environment</name>
+                    <value>development</value>
+                </property>
+            </activation>
+            <properties>
+                <dockerdir>dev</dockerdir>
+            </properties>
+        </profile>
+        <profile>
+            <id>ProdEnvProfile</id>
+            <activation>
+                <property>
+                    <name>environment</name>
+                    <value>production</value>
+                </property>
+            </activation>
+            <properties>
+                <dockerdir>prod</dockerdir>
+            </properties>
+        </profile>
+    </profiles>
+
     <build>
         <plugins>
             <plugin>
@@ -82,9 +111,9 @@
                 <version>1.2.0</version>
                 <configuration>
                     <imageName>${project.artifactId}</imageName>
-                    <dockerDirectory>docker/groupomania/</dockerDirectory>
+                    <dockerDirectory>${project.basedir}/docker/${dockerdir}/groupomania_client/</dockerDirectory>
                     <buildArgs>
-                        <JAR_FILE>groupomania-1.0.jar</JAR_FILE>
+                        <JAR_FILE>groupomania-client-1.0.jar</JAR_FILE>
                     </buildArgs>
                     <resources>
                         <resource>

@@ -1,0 +1,12 @@
+version: '2.2'
+
+services:
+  groupomania_client:
+    build: groupomania_client/
+    restart: always
+    mem_limit: 2G
+    cpu_shares: 500 # Default val is 1024, lower values increase CPU priority
+    pids_limit: 64 # Limits num of processes running in container, prevents fork bombs for example
+    read_only: true # Makes container read only
+    ports:
+      - "127.0.0.1:8080:8080"
