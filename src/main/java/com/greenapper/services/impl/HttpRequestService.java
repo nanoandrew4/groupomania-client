@@ -51,11 +51,12 @@ public class HttpRequestService {
 			serverResponse.setCode(conn.getResponseCode());
 			serverResponse.setBody(readStream(conn.getInputStream()));
 			serverResponse.setHeaders(conn.getHeaderFields());
-		} catch (IOException e) {
+		} catch (IOException | NullPointerException e) {
 			try {
 				if (conn != null)
 					serverResponse.setBody(readStream(conn.getErrorStream()));
-			} catch (IOException ex) {
+			} catch (IOException | NullPointerException ex) {
+				LOG.error("Server response code was: " + serverResponse.getCode() + " for request to " + serverUrl + relativeUri);
 				LOG.error("An error occurred, neither a success or error response stream were available", ex);
 			}
 		}

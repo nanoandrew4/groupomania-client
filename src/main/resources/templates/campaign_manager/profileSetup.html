@@ -41,8 +41,7 @@
                     <br/>
                     <img th:if="*{profileImageFilePath != null && profileImageFilePath != ''}" src=""
                          alt="Profile Image"
-                         th:src="${@environment.getProperty('groupomania.server.backend.url')} + '/images?fileName=' + *{profileImageFilePath}"
-                         class="img-thumbnail"/>
+                         th:src="@{/images(fileName=*{profileImageFilePath})}" class="img-thumbnail"/>
                     <input accept="image/x-png,image/jpeg,image/jpg" type="file" name="tempProfileImage"/>
                 </div>
             </div>

@@ -33,8 +33,7 @@
                 <td th:text="${campaign.state.displayName}"></td>
                 <td><img class="img-thumbnail img-table-size"
                          th:if="${campaign.campaignImageFilePath != null && campaign.campaignImageFilePath != ''}"
-                         th:src="${@environment.getProperty('groupomania.server.backend.url')} + '/images?fileName=' + ${campaign.campaignImageFilePath}"
-                         src=""/>
+                         th:src="@{/images(fileName=${campaign.campaignImageFilePath})}" src=""/>
                 </td>
                 <td>
                     <form th:action="@{/campaigns/view/} + ${campaign.id}" method="get">

@@ -111,7 +111,7 @@
                 <version>1.2.0</version>
                 <configuration>
                     <imageName>${project.artifactId}</imageName>
-                    <dockerDirectory>${project.basedir}/docker/${dockerdir}/groupomania_client/</dockerDirectory>
+                    <dockerDirectory>${project.basedir}/docker/${dockerdir}/groupomania-client/</dockerDirectory>
                     <buildArgs>
                         <JAR_FILE>groupomania-client-1.0.jar</JAR_FILE>
                     </buildArgs>

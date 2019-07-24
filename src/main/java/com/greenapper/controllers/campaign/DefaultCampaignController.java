@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 
-import java.io.IOException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 
@@ -44,15 +42,18 @@ public class DefaultCampaignController {
 
 	@GetMapping(ROOT_URI)
 	public String getAllVisibleCampaigns(final Model model) {
-		try {
-			final List<CampaignDTO> campaigns = httpRequestHandlerService.getObjectMapper()
-					.readValue(new URL("http://localhost:8444/api/campaigns"), new TypeReference<List<CampaignDTO>>() {
-					});
-			model.addAttribute("campaigns", campaigns);
-		} catch (IOException e) {
-			LOG.error("Could not retrieve all visible campaigns");
-		}
-		return "home";
+		final ServerRequest serverRequest = new ServerRequest();
+		serverRequest.setRelativeUri("/campaigns");
+		serverRequest.setMethod("GET");
+		serverRequest.setSuccessRedirectUri("home");
+		serverRequest.setErrorRedirectUri("home");
+		serverRequest.setResponseBodyType(new TypeReference<List<CampaignDTO>>() {
+		});
+
+		final ServerResponse response = httpRequestHandlerService.sendAndHandleRequest(serverRequest, null, null);
+
+		model.addAttribute("campaigns", response.getBody());
+		return response.getRedirectUri();
 	}
 
 	@GetMapping(CAMPAIGN_VIEW_URI + "/{id}")
