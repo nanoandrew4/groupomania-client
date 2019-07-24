@@ -15,7 +15,7 @@
     </parent>
 
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>8</java.version>
         <dockerdir>prod</dockerdir>
         <docker.image.prefix>greenapper</docker.image.prefix>
     </properties>

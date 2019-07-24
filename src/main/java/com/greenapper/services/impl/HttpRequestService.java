@@ -12,6 +12,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
 
+/**
+ * Class for sending requests and interpreting responses from the groupomania backend.
+ */
 @Component
 public class HttpRequestService {
 
@@ -20,6 +23,18 @@ public class HttpRequestService {
 
 	private Logger LOG = LoggerFactory.getLogger(HttpRequestService.class);
 
+	/**
+	 * Sends a request to the groupomania backend, with the specified parameters. Once the request is submitted,
+	 * the following fields of the {@link ServerResponse} instance will be populated: code, body, headers.
+	 * The body of the response is read and stored as a plain string, so conversion to objects has to be handled elsewhere
+	 * if such functionality is required.
+	 *
+	 * @param relativeUri       URI without the host and context path of the desired endpoint to call
+	 * @param method            HTTP method for the request (GET, POST...)
+	 * @param requestProperties Request properties for the call, such as headers
+	 * @param body              The body of the request
+	 * @return A {@link ServerResponse} instance containing the details of the request
+	 */
 	public ServerResponse sendRequest(final String relativeUri, final String method,
 									  @Nullable final Map<String, String> requestProperties, @Nullable final String body) {
 		HttpURLConnection conn = null;
@@ -27,14 +42,9 @@ public class HttpRequestService {
 		try {
 			final URL url = new URL(serverUrl + relativeUri);
 			conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod(method);
 
-			if ("PATCH".equals(method)) {
-				conn.setRequestProperty("X-HTTP-Method-Override", "PATCH");
-				conn.setRequestMethod("POST");
-			} else
-				conn.setRequestMethod(method);
-
-			conn.setInstanceFollowRedirects(false);
+			conn.setInstanceFollowRedirects(false); // Allows 300 responses to be interpreted locally, instead of automatically resolved
 			if (requestProperties != null && requestProperties.size() > 0)
 				for (String key : requestProperties.keySet())
 					conn.addRequestProperty(key, requestProperties.get(key));
@@ -64,6 +74,14 @@ public class HttpRequestService {
 		return serverResponse;
 	}
 
+	/**
+	 * Reads an {@link InputStream} and returns its contents as a {@link String}.
+	 *
+	 * @param inputStream Input stream to read from
+	 * @return Contents of the input stream, as a String
+	 *
+	 * @throws IOException If the stream is null
+	 */
 	private String readStream(final InputStream inputStream) throws IOException {
 		final BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
 		final StringBuilder responseBuffer = new StringBuilder();

@@ -15,16 +15,16 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.Optional;
 
+/**
+ * Custom deserializer for {@link CampaignDTO} subclasses, since the backend returns {@link CampaignDTO} instances,
+ * and they can't be deserializer by Jackson by default.
+ */
 public class CampaignDTODeserializer extends StdDeserializer<CampaignDTO> {
 
 	private Logger LOG = LoggerFactory.getLogger(CampaignDTODeserializer.class);
 
 	public CampaignDTODeserializer() {
-		this(null);
-	}
-
-	protected CampaignDTODeserializer(Class<?> vc) {
-		super(vc);
+		super(CampaignDTO.class);
 	}
 
 	@Override

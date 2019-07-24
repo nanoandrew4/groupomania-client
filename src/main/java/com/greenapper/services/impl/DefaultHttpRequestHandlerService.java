@@ -48,7 +48,7 @@ public class DefaultHttpRequestHandlerService implements HttpRequestHandlerServi
 
 			if (!serverRequest.getResponseBodyType().getType().equals(new TypeReference<String>() {
 			}.getType()))
-				response.setBody(parseResponseBody(serverRequest.getResponseBodyType(), (String) response.getBody()));
+				response.setBody(parseBody(serverRequest.getResponseBodyType(), (String) response.getBody()));
 		} else if (response.getCode() >= 300 && response.getCode() < 400) {
 			response.setRedirectUri("redirect:" + response.getHeaders().get("Location").get(0).replaceAll(serverUrl, ""));
 		} else if (response.getCode() == 401) {
@@ -56,7 +56,8 @@ public class DefaultHttpRequestHandlerService implements HttpRequestHandlerServi
 		} else if (response.getCode() == 404) {
 			response.setRedirectUri("error-not-found");
 		} else if (response.getCode() >= 400) {
-			final ValidationErrorDTO validationErrorDTO = parseValidationErrors((String) response.getBody());
+			final ValidationErrorDTO validationErrorDTO = (ValidationErrorDTO) parseBody(new TypeReference<ValidationErrorDTO>() {
+			}, (String) response.getBody());
 			if (validationErrorDTO != null && validationErrorDTO.getValidationErrors() != null && errors != null) {
 				for (String error : validationErrorDTO.getValidationErrors())
 					errors.reject(null, error);
@@ -71,7 +72,7 @@ public class DefaultHttpRequestHandlerService implements HttpRequestHandlerServi
 	}
 
 	@Override
-	public Object parseResponseBody(final TypeReference typeReference, final String body) {
+	public Object parseBody(final TypeReference typeReference, final String body) {
 		try {
 			return objectMapper.readValue(body, typeReference);
 		} catch (IOException e) {
@@ -83,15 +84,5 @@ public class DefaultHttpRequestHandlerService implements HttpRequestHandlerServi
 	@Override
 	public ObjectMapper getObjectMapper() {
 		return objectMapper;
-	}
-
-	@Override
-	public ValidationErrorDTO parseValidationErrors(final String body) {
-		try {
-			return objectMapper.readValue(body, ValidationErrorDTO.class);
-		} catch (IOException e) {
-			LOG.error("Failed to parse validation errors from body: " + body, e);
-			return null;
-		}
 	}
 }

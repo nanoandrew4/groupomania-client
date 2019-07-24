@@ -9,6 +9,10 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
+/**
+ * Extracts the cookie containing the user token, if it exists, and sets it for the current request in the {@link CookieService}
+ * so that it can be used as part of requests made to the backend.
+ */
 @Component
 public class CookieExtractorFilter implements Filter {
 

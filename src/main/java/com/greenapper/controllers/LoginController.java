@@ -41,9 +41,9 @@ public class LoginController {
 		final String basicAuth = "Basic " + new String(new Base64().encode(basicUsernameAndPassword.getBytes()));
 		requestParams.put("Authorization", basicAuth);
 
-		String params = "username=" + loginForm.getUsername() +
-						"&password=" + loginForm.getPassword() +
-						"&grant_type=password";
+		final String params = "username=" + loginForm.getUsername() +
+							  "&password=" + loginForm.getPassword() +
+							  "&grant_type=password";
 
 		final ServerRequest serverRequest = new ServerRequest();
 		serverRequest.setMethod("POST");
@@ -80,7 +80,7 @@ public class LoginController {
 			for (Cookie c : request.getCookies()) {
 				if (c.getName().contains("Token")) {
 					tokenCookie = c;
-					tokenCookie.setMaxAge(0);
+					tokenCookie.setMaxAge(0); // On next call, cookie will be deleted
 					response.addCookie(tokenCookie);
 					break;
 				}
@@ -90,6 +90,13 @@ public class LoginController {
 		return "redirect:/";
 	}
 
+	/**
+	 * Creates a cookie containing the token from a successful authentication attempt, so that the token can be reused
+	 * in future calls.
+	 *
+	 * @param oauthResponse Server response containing the newly obtained token for the logged in user
+	 * @return Cookie containing the token, which expires at the same time that the token is due to expire
+	 */
 	private Cookie createTokenCookie(final String oauthResponse) {
 		try {
 			final JsonNode rootNode = httpRequestHandlerService.getObjectMapper().readTree(oauthResponse);
