@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PutMapping;
 
 import java.util.HashMap;
@@ -53,7 +54,7 @@ public class CampaignManagerProfileController {
 	}
 
 	@PutMapping(PROFILE_UPDATE_URI)
-	public String updateProfile(final CampaignManagerProfileForm profileForm, final Errors errors) {
+	public String updateProfile(@ModelAttribute("campaignManagerProfile") final CampaignManagerProfileForm profileForm, final Errors errors) {
 		final ServerRequest serverRequest = new ServerRequest();
 		serverRequest.setRelativeUri("/campaign-manager/profile");
 		serverRequest.setMethod("PUT");

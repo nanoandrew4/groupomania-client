@@ -14,11 +14,8 @@
         </div>
         <form action="#" th:action="@{/campaign-manager/profile}" th:method="put"
               th:object="${campaignManagerProfile}" enctype="multipart/form-data">
-            <div class="text-danger validation-summary-valid" data-valmsg-summary="true">
-                <ul th:if="${#fields.hasErrors('*')}">
-                    <li th:each="err : ${#fields.errors('*')}" th:text="${err}">Bad input</li>
-                </ul>
-            </div>
+
+            <form th:replace="fragments :: validationErrors">Validation errors</form>
 
             <div class="form-group">
                 <div hidden="hidden">
