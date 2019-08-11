@@ -67,7 +67,9 @@ public class DefaultCampaignController {
 		});
 
 		final HashMap<String, String> requestParams = new HashMap<>();
-		requestParams.put("Authorization", "Bearer " + cookieService.getCampaignManagerToken());
+		final String token = cookieService.getCampaignManagerToken();
+		if (token != null)
+			requestParams.put("Authorization", "Bearer " + token);
 		serverRequest.setRequestParameters(requestParams);
 
 		final ServerResponse response = httpRequestHandlerService.sendAndHandleRequest(serverRequest, null, null);
